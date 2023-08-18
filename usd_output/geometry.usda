@@ -1,0 +1,12 @@
+#usda 1.0
+(
+    subLayers = [
+        @/thor/scripts/map_converter/usd_output/geometry/geometry_0.usda@,
+        @/thor/scripts/map_converter/usd_output/geometry/geometry_1.usda@,
+        @/thor/scripts/map_converter/usd_output/geometry/geometry_2.usda@,
+        @/thor/scripts/map_converter/usd_output/geometry/geometry_3.usda@,
+        @/thor/scripts/map_converter/usd_output/geometry/geometry_4.usda@
+    ]
+    upAxis = "Z"
+)
+

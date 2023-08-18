@@ -1,0 +1,201 @@
+syntax = "proto3";
+
+package oasis.proto.planning;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/geometry.proto";
+import "common/proto/common/util.proto";
+import "common/proto/common/semantic_type.proto";
+
+message TrajectoryPoint {
+  double x = 1;
+  double y = 2;
+  double theta = 3;
+  double kappa = 4;
+  double s = 5;
+  double v = 6;
+  double w = 7;
+  double linear_acc = 8;
+  double angular_acc = 9;
+  double t = 10;
+}
+
+message SpinConfig {
+  double max_angular_vel = 1;
+  double radius = 2;
+  bool is_clockwise = 3;
+  bool is_backward = 4;
+  enum Mode {
+    TARGET_MINIMIZE_ANGLE = 0;
+    TARGET = 1;
+    TARGET_MAXIMIZE_ANGLE = 2;
+    DISTANCE = 3;
+  }
+  Mode mode = 5;
+  double cmd = 6;
+}
+
+message PTGConfig {
+  bool is_back = 1;
+
+  bool cutter_on = 2;
+
+  enum Mode {
+    NEVER_REACH = 0;
+    IN_RANGE = 1;
+    CROSS_THE_END = 2;
+  }
+  Mode reach_mode = 3;
+  double range = 4;
+}
+
+enum FieldEdgeTaskType {
+  FIELD_EDGE_DEFAULT_TASK = 0;
+  FIELD_EDGE_ROAD_TASK = 1;
+  FIELD_EDGE_TREE_TASK = 2;
+  FIELD_EDGE_PARTERRE_TASK = 3;
+  FIELD_EDGE_BUSH_TASK = 4;
+  //...
+  FIELD_EDGE_CORNER_TASK = 11;
+  FIELD_EDGE_BACKUP_TASK = 12;
+  FIELD_EDGE_VIRTUAL_ZONE_TASK = 13;
+}
+
+enum BreakTaskType {
+  BREAK_DONE_TASK = 0;
+  BREAK_BUMPER_EDGE_TASK = 1;
+  BREAK_PRE_CLOSED_EDGE_TASK = 2;
+  BREAK_VIRTUAL_BUMPER_EDGE_TASK = 3;
+}
+
+enum EdgeSideType {
+  EDGE_SIDE_TYPE_UNKNOWN = 0;
+  EDGE_SIDE_TYPE_LEFT = 1;
+  EDGE_SIDE_TYPE_RIGHT = 2;
+}
+
+enum EdgeSpaceType {
+  EDGE_SPACE_TYPE_UNKNOWN = 0;
+  EDGE_SPACE_TYPE_FREE = 1;
+  EDGE_SPACE_TYPE_BLOCK = 2;
+}
+
+enum EdgeCornerType {
+  EDGE_CORNER_TYPE_UNKNOWN = 0;
+  EDGE_CORNER_TYPE_ANGLE_0_135 = 1;
+  EDGE_CORNER_TYPE_ANGLE_135_180 = 2;
+  EDGE_CORNER_TYPE_ANGLE_180_225 = 3;
+  EDGE_CORNER_TYPE_ANGLE_GE_225 = 4;
+};
+
+// map frame
+message EdgeReferenceLine {
+  uint64 ing_seg_idx = 1;
+  uint64 ing_edge_idx = 2;
+  uint64 edge_info_idx = 3;
+  proto.common.SemanticType semantic_type = 4;
+  // false for left, true for right
+  bool edge_side = 5;
+  repeated TrajectoryPoint rl_pts = 6;
+  EdgeCornerType start_corner_type = 7;
+  EdgeCornerType end_corner_type = 8;
+  uint64 last_seg_idx = 9;
+  uint64 next_seg_idx = 10;
+  proto.common.SemanticType last_semantic_type = 11;
+  proto.common.SemanticType next_semantic_type = 12;
+  repeated TrajectoryPoint last_rl_pts = 13;
+  repeated TrajectoryPoint next_rl_pts = 14;
+}
+
+// odom frame
+message EdgeSegInfo {
+  uint64 ing_seg_idx = 1;
+  uint64 ing_edge_idx = 2;
+  uint64 edge_info_idx = 3;
+  proto.common.SemanticType semantic_type = 4;
+  // false for left, true for right
+  bool edge_side = 5;
+
+  EdgeCornerType start_corner_type = 6;
+  EdgeCornerType end_corner_type = 7;
+
+  EdgeSpaceType cur_space_type = 8;
+  // only valid in corner
+  EdgeSpaceType next_space_type = 9;
+
+  repeated TrajectoryPoint rl = 10;
+  // only valid in corner
+  repeated TrajectoryPoint next_rl = 11;
+  double distance_to_corner = 12;
+  proto.common.SemanticType next_semantic_type = 13;
+  proto.common.PointSet3D roi_obs_points = 14;
+  proto.common.PointSet3D lawn_points = 15;
+  proto.common.PointSet3D left_lidar_edge_points = 16;
+  proto.common.PointSet3D right_lidar_edge_points = 17;
+}
+
+message EdgeCutTrajectory {
+  bool is_back = 1;
+
+  bool cutter_on = 2;
+  // false for left, true for right
+  bool edge_side = 3;
+
+  oasis.proto.common.SemanticType edge_type = 4;
+
+  repeated TrajectoryPoint traj_point = 5;
+  // bumper
+  bool is_adjust_bumper = 6;
+  // navi
+  bool is_adjust_navi = 7;
+  // corner backward & forward
+  bool is_adjust_corner = 8;
+
+  bool is_adjust_spin = 9;
+
+  double corner_angle = 10;
+
+  EdgeSegInfo edge_seg_info = 11;
+  // map, odom...
+  string frame = 12;
+
+  double spin_cmd = 13;
+  double spin_origin = 14;
+  double spin_target = 15;
+
+  string edge_id = 16;
+}
+
+enum PlanResultType {
+  PLAN_RESULT_TYPE_DEFAULT = 0;
+  PLAN_RESULT_TYPE_REMOTE = 1;
+  PLAN_RESULT_TYPE_PAUSE = 2;
+  PLAN_RESULT_TYPE_RESUME = 3;
+  PLAN_RESULT_TYPE_STOP = 4;
+  PLAN_RESULT_TYPE_SPIN = 5;
+  PLAN_RESULT_TYPE_PTG_FOLLOW = 6;
+  PLAN_RESULT_TYPE_PID_FOLLOW = 7;
+  PLAN_RESULT_TYPE_EDGE = 9;
+}
+
+// traj_point is base_link position of map frame.
+// refer to: https://hiiujgqx1c.feishu.cn/wiki/wikcnoq7hHZCZq54AibMipOjtOh
+message PlanningResult {
+  oasis.proto.common.Header header = 1;
+
+  string work_frame_id = 2;
+
+  uint64 plan_result_id = 3;
+
+  repeated oasis.proto.common.Pose2d trajectory = 4;
+
+  PlanResultType type = 5;
+
+    bool rc_enable = 6;
+
+    SpinConfig spin_config = 7;
+
+    PTGConfig ptg_config = 8;
+
+    EdgeCutTrajectory edge_trajectory = 9;
+}

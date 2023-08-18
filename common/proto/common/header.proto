@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package oasis.proto.common;
+
+message Header {
+  // message publishing time in nano-second.
+  uint64 timestamp_ns = 1;
+
+  // message publishing time in seconds.
+  double timestamp_sec = 2;
+
+  // node name: slam, perception, maphub...
+  string node_name = 3;
+
+  // Sequence number for each message. Each node maintains its own counter for
+  // sequence_num, always starting from 1 on boot.
+  uint32 sequence_num = 4;
+
+  // Frame this data is associated with
+  string frame_id = 5;
+
+  // data version
+  uint32 version = 6 ;
+}

@@ -1,0 +1,10 @@
+#usda 1.0
+(
+    subLayers = [
+        @anon:0x10c10340:tmp.usda@,
+        @anon:0x11158fb0:tmp.usda@,
+        @anon:0x114bc180:tmp.usda@
+    ]
+    upAxis = "Z"
+)
+

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package oasis.proto.perc;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/image.proto";
+import "common/proto/common/util.proto";
+import "common/proto/common/semantic_type.proto";
+
+message SemanticSegmentation2D {
+  oasis.proto.common.Header header = 1;
+  // semantic segmentation image
+  oasis.proto.common.Image image = 2;
+}
+
+message DetectionBoundingBox2D {
+  oasis.proto.common.SemanticType type = 1;
+  oasis.proto.common.BoundingBox2D bounding_box = 2;
+  double depth = 3;
+  double confidence = 4;
+}
+
+message DetectionResult {
+  oasis.proto.common.Header header = 1;
+  // detected bounding boxes of this image
+  repeated DetectionBoundingBox2D detection_box = 2;
+}
+
+message ColoredPointCloud {
+  oasis.proto.common.Header header = 1;
+  // real-time msg, point cloud colored by perception shader.
+  // Require to fill field: SemanticPointCloud.MetaPoint.Meta
+  // reference lidar_fixed_pose
+  oasis.proto.common.SemanticPointCloud scan = 2;
+}

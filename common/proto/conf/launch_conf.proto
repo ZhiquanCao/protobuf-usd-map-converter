@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package oasis.proto.config;
+
+import "common/proto/conf/module_conf.proto";
+
+message LaunchConfig {
+  repeated ModuleConfig module_config = 1;
+}

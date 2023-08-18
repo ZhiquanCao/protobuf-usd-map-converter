@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package oasis.proto.common;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/meta.proto";
+import "common/proto/common/semantic_type.proto";
+import "common/proto/common/geometry.proto";
+
+message Pose2d {
+  Vector2D position = 1;
+  double yaw = 2 ;
+}
+
+message Pose3d {
+  Vector3D position = 1;
+  Quaternion rotation = 2;
+}
+
+message BoundingBox2D {
+  // top_left of bounding box in pixel frame
+  Vector2D top_left = 1;
+  // bottom_right of bounding box in pixel frame
+  Vector2D bottom_right = 2;
+}
+
+message MetaPoint3D {
+  oasis.proto.common.Meta meta = 1;
+  Vector3D point = 2;
+}
+
+message SemanticPointCloud {
+  oasis.proto.common.Header header = 1;
+  // reference info: {reference anchor_pose, reference lidar_fixed_pose}
+  repeated MetaPoint3D point = 2;
+}
+
+message SemanticPoint2D {
+  SemanticType type = 1;
+  Vector2D point = 2;
+}
+
+message SemanticLine {
+  repeated SemanticPoint2D semantic_point = 1;
+}
+
+message SemanticStraightLine {
+  SemanticPoint2D start_pt = 1;
+  SemanticPoint2D end_pt = 2;
+}
+
+message SemanticPolygon {
+  repeated SemanticPoint2D semantic_point = 1;
+}
+
+message RobotStateInfo {
+  oasis.proto.common.Header header = 1;
+  enum RobotState {
+    PLACEHOLDER = 0;
+    IDLE = 1;
+    START = 2;
+    RESET = 3;
+    ABNORMAL = 4;
+  }
+  RobotState robot_state = 2;
+}
+
+message WorkingModeInfo {
+  oasis.proto.common.Header header = 1;
+  enum ModeType {
+    PLACEHOLDER = 0;
+    IDLE = 1;
+    BOUNDARY_MAPPING = 2;
+    EXPLORE_MAPPING = 3;
+    MOW = 4;
+  }
+  ModeType mode_type = 2;
+}

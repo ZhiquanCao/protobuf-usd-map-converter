@@ -1,0 +1,33 @@
+#usda 1.0
+(
+    upAxis = "Z"
+)
+
+def Xform "edge_info_2"
+{
+    def Mesh "Mesh" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "SemanticsAPI:Semantics_Be3K"]
+    )
+    {
+        int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3]
+        int[] faceVertexIndices = [9, 8, 7, 7, 6, 5, 4, 3, 2, 2, 1, 9, 9, 7, 5, 4, 2, 9, 9, 5, 4]
+        rel material:binding = </edge_info_2/Material>
+        point3f[] points = [(-0.27384782, 3.2112632, 0), (-0.1520133, 1.1999638, 0), (-0.6686155, 0.3402967, 0), (-5.7223597, 0.1329904, 0), (-8.776873, 0.16460896, 0), (-9.796173, -0.013553449, 0), (-10.448022, 4.485237, 0), (-10.487593, 5.7868285, 0), (-0.09210356, 5.034037, 0), (-0.27384782, 3.2112632, 0)]
+        string semantic:Semantics_Be3K:params:semanticData = "grass"
+        string semantic:Semantics_Be3K:params:semanticType = "class"
+        uniform token subdivisionScheme = "bilinear"
+    }
+
+    def Material "Material"
+    {
+        token outputs:surface.connect = </edge_info_2/Material/Shader.outputs:surface>
+
+        def Shader "Shader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0, 0.34, 0)
+            token outputs:surface
+        }
+    }
+}
+

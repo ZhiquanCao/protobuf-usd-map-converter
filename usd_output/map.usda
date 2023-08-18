@@ -1,0 +1,10 @@
+#usda 1.0
+(
+    subLayers = [
+        @/thor/scripts/map_converter/usd_output/geometry.usda@,
+        @/thor/scripts/map_converter/usd_output/edge_info.usda@,
+        @/thor/scripts/map_converter/usd_output/channels.usda@
+    ]
+    upAxis = "Z"
+)
+

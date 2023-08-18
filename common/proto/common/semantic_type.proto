@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package oasis.proto.common;
+// refer to: https://hiiujgqx1c.feishu.cn/wiki/wikcngIehuqlV0WzvIVEUhqzOwf
+enum SemanticType {
+  OTHERS = 0;
+  LAWN = 1;
+  ROAD = 2;
+  BUSH = 3;
+  CURB = 4;
+  PEBBLE = 5;
+  TREE_ROOT = 6;
+  LEAF = 7;
+  BASE_TAG = 20;
+  HUMAN = 21;
+  DOG = 22;
+  CAT = 23;
+  TREE = 24;
+  PLANT = 25;
+  STONE = 26;
+  WALL = 27;
+  FENCE = 28;
+
+  // PnC define: start with idx 120
+  CORNER = 120;
+  VIRTUAL_ZONE = 121;
+
+
+  // out of fov range
+  UNKNOWN = 255;
+}

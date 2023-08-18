@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package oasis.proto.monitor;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/geometry.proto";
+
+
+message MonitorCollision {
+  oasis.proto.common.Header header = 1;
+
+  bool is_collision = 2;
+  // along with trajectory
+  double collision_dist = 3;
+}
+
+message MonitorFollowState {
+  oasis.proto.common.Header header = 1;
+
+  string plan_result_id = 2;
+
+  uint64 target_point_id = 3;
+
+  double lateral_error = 4;
+
+  double rest_traj_length = 5;
+}
+
+message MonitorLocState {
+  oasis.proto.common.Header header = 1;
+
+  bool is_stable = 2;
+  // ms
+  double time_ms_gap = 3;
+
+  double dist_gap = 4;
+  // deg(-180, 180]
+  double angle_deg_gap = 5;
+
+  double dist_gap_from_last_planning_res = 6;
+  // deg(-180, 180]
+  double angle_deg_gap_from_last_planning_res = 7;
+}
+
+message MonitorBumper {
+  oasis.proto.common.Header header = 1;
+
+  bool is_bumper = 2;
+
+  enum BumperSource {
+    BUMPER_SOURCE_SENSOR = 0;
+    BUMPER_SOURCE_ACCUMULATE = 1;
+  }
+
+  BumperSource bumper_source = 3;
+  // only valid in bumper_source = BUMPER_SOURCE_SENSOR
+  enum BumperPos {
+    BUMPER_UNKNOWN = 0;
+    BUMPER_LEFT = 1;
+    BUMPER_FRONT = 2;
+    BUMPER_RIGHT = 3;
+  }
+  BumperPos bumper_pos = 4;
+}
+
+message EdgeClosedState {
+  string edge_id = 1;
+  bool is_closed = 2;
+  bool is_pre_closed = 3;
+}
+
+message MonitorEdgeClosedState {
+  repeated EdgeClosedState states = 1;
+}
+
+message MonitorHealthState {
+  message TopicState {
+    string topic_name = 1;
+    double frequency = 2;
+    uint64 callback_latency = 3;
+  }
+  repeated TopicState topic_state = 1;
+}
+
+message MonitorVirtualBumper {
+  oasis.proto.common.Header header = 1;
+  bool is_bumper = 2;
+}
+
+message MonitorInfo {
+  oasis.proto.common.Header header = 1;
+
+  MonitorCollision monitor_coll = 2;
+
+  MonitorFollowState monitor_follow_state = 3;
+
+  MonitorLocState monitor_loc_state = 4;
+
+  MonitorBumper monitor_bumper = 5;
+
+  MonitorEdgeClosedState monitor_edge_closed_state = 6;
+
+  MonitorHealthState monitor_health_state = 7;
+
+  MonitorVirtualBumper monitor_virtual_bumper = 8;
+}

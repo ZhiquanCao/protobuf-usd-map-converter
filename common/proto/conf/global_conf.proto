@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package oasis.proto.config;
+
+import "common/proto/conf/run_mode_conf.proto";
+
+// Same meaning as glog
+message LogConfig {
+  // e.g. /oudin/log
+  string log_dir = 1;
+  // 0-INFO, 1-WARNING, 2-ERROR, 3-FATAL
+  uint32 minloglevel = 2;
+  // print to console
+  bool alsologtostderr = 3;
+  // log with file_name, line_num
+  bool log_prefix = 4;
+}
+
+
+message GlobalConfig {
+  LogConfig log_config = 1;
+  RunModeConf run_mode_conf = 2;
+  string robot_param_path = 3;
+  string slam_cali_path = 4;
+}

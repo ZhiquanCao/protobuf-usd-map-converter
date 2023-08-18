@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package oasis.proto.slam;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/util.proto";
+import "common/proto/common/geometry.proto";
+
+message PoseStamped {
+  // timestamp in nano-second.
+  uint64 timestamp_ns = 1;
+  // anchor id (key frame)
+  uint64 id = 2;
+  // global frame pose, from local(body) to world
+  oasis.proto.common.Pose3d pose = 3;
+}
+
+message Graph {
+  oasis.proto.common.Header header = 1;
+  repeated PoseStamped keyframes = 2;
+}
+
+// camera_link position
+message Localization {
+  oasis.proto.common.Header header = 1;
+  // velocity in odometry frame
+  oasis.proto.common.Vector3D velocity = 2;
+  // acceleration in odometry frame
+  oasis.proto.common.Vector3D acceleration = 3;
+  // robot pose to odometry pose
+  oasis.proto.common.Pose3d robot_to_odometry = 4;
+  // odometry pose to world pose
+  oasis.proto.common.Pose3d odometry_to_world = 5;
+}

@@ -1,0 +1,33 @@
+#usda 1.0
+(
+    upAxis = "Z"
+)
+
+def Xform "edge_info_0"
+{
+    def Mesh "Mesh" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "SemanticsAPI:Semantics_MYgN"]
+    )
+    {
+        int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+        int[] faceVertexIndices = [1, 30, 29, 29, 28, 27, 27, 26, 25, 24, 23, 22, 22, 21, 20, 19, 18, 17, 17, 16, 15, 15, 14, 13, 12, 11, 10, 10, 9, 8, 7, 6, 5, 5, 4, 3, 3, 2, 1, 1, 29, 27, 25, 24, 22, 19, 17, 15, 15, 13, 12, 12, 10, 8, 5, 3, 1, 25, 22, 20, 20, 19, 15, 15, 12, 8, 5, 1, 27, 27, 25, 20, 20, 15, 8, 7, 5, 27, 27, 20, 8, 8, 7, 27]
+        rel material:binding = </edge_info_0/Material>
+        point3f[] points = [(1.8134651, -7.4238915, 0), (1.1366068, -7.3680363, 0), (1.033304, -6.933386, 0), (1.1884292, -4.924308, 0), (1.5627476, -3.9828248, 0), (2.506241, -4.32693, 0), (2.6444662, 0.77521366, 0), (3.0351913, 2.7608688, 0), (3.1028576, 3.7685778, 0), (2.9829082, 4.8084707, 0), (7.193521, 4.522216, 0), (8.770888, 4.235729, 0), (8.860746, 2.518301, 0), (9.300492, 1.769761, 0), (9.497922, -0.22321977, 0), (9.233256, -1.741426, 0), (9.086803, -3.354951, 0), (8.882347, -4.2539062, 0), (8.438109, -5.2211323, 0), (8.106341, -5.714341, 0), (8.002092, -6.040114, 0), (8.166367, -6.1808414, 0), (7.697237, -7.8381677, 0), (6.0751657, -7.6428614, 0), (6.069654, -7.153191, 0), (5.889483, -6.9726496, 0), (4.797579, -7.14039, 0), (3.3405602, -6.8634567, 0), (3.1951919, -7.5090556, 0), (2.0271788, -7.4255033, 0), (1.8134651, -7.4238915, 0)]
+        string semantic:Semantics_MYgN:params:semanticData = "grass"
+        string semantic:Semantics_MYgN:params:semanticType = "class"
+        uniform token subdivisionScheme = "bilinear"
+    }
+
+    def Material "Material"
+    {
+        token outputs:surface.connect = </edge_info_0/Material/Shader.outputs:surface>
+
+        def Shader "Shader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0, 0.34, 0)
+            token outputs:surface
+        }
+    }
+}
+

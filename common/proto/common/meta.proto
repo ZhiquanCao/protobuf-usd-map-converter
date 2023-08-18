@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package oasis.proto.common;
+
+import "common/proto/common/semantic_type.proto";
+
+message Color {
+  // color: [0,255]
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+}
+
+message Meta {
+  Color color = 1;
+  // alpha
+  uint32 alpha = 2;
+  // lidar/light reflective intensity
+  double intensity = 3;
+  // global common type
+  SemanticType type = 4;
+}

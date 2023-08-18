@@ -1,0 +1,60 @@
+syntax = "proto3";
+import "common/proto/common/geometry.proto";
+import "common/proto/common/util.proto";
+
+package oasis.proto.config;
+
+message ContourParam {
+  repeated common.Vector2D points = 1;
+}
+
+message CutterParam {
+  double length = 1;
+  int32 blades_number = 2;
+  double max_motor_velocity = 3;
+  double max_motor_acceleration = 4;
+  double motor_speed_ratio = 5;
+}
+
+message WheelParam {
+  double diameter = 1;
+  double max_wheel_velocity = 2;
+  double max_wheel_acceleration = 3;
+  double motor_speed_ratio = 4;
+}
+
+message CameraParam {
+  double xi = 1;                  /*!< 鱼眼摄像头光心偏置系数 */
+  double fx = 2;                  /*!< 焦距x方向(像素) */
+  double fy = 3;                  /*!< 焦距y方向(像素) */
+  double cx = 4;                  /*!< 主点x方向(像素) */
+  double cy = 5;                  /*!< 主点y方向(像素) */
+  repeated double distortion = 6; /*!< 畸变系数 */
+  int32 image_width = 7;          /*!< 图像宽度 */
+  int32 image_height = 8;         /*!< 图像高度 */
+}
+
+message Frame{
+  optional string base_frame_id = 1;
+  string frame_id = 2;
+  common.Pose3d extrinsics = 3;
+  oneof param{
+    CameraParam camera = 4;
+    ContourParam contour = 5;
+    CutterParam cutter = 6;
+    WheelParam wheel = 7;
+  }
+}
+
+message RobotBaseParameter {
+  double robot_length = 1;                                /*!< 外廓长 单位m */
+  double robot_width = 2;                                 /*!< 外廓宽 单位m */
+  double robot_height = 3;                                /*!< 外廓高 单位m */
+  double robot_shift = 4;                                 /*!<base_link->cent*/
+}
+
+message RobotDescription{
+  string robot_id = 1;
+  RobotBaseParameter robot_param = 2;
+  repeated Frame frames = 3;
+}

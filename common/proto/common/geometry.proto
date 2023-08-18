@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package oasis.proto.common;
+
+// A general 2D point. Its meaning and units depend on context, and must be
+// explained in comments.
+message Vector2D {
+  double x = 1 ;
+  double y = 2 ;
+}
+
+// A general 3D point. Its meaning and units depend on context, and must be
+// explained in comments.
+message Vector3D {
+  double x = 1 ;
+  double y = 2 ;
+  double z = 3 ;
+}
+
+// A unit quaternion that represents a spatial rotation. See the link below for
+// details.
+//   https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+// The scalar part qw can be omitted. In this case, qw should be calculated by
+//   qw = sqrt(1 - qx * qx - qy * qy - qz * qz).
+message Quaternion {
+  double x = 1 ;
+  double y = 2 ;
+  double z = 3 ;
+  double w = 4 ;
+}
+
+message LineSegment {
+  Vector2D start_pt = 1;
+  Vector2D end_pt = 2;
+}
+
+message PointSet {
+  repeated Vector2D point = 1;
+}
+
+message PointSet3D {
+  repeated Vector3D point = 1;
+}
+
+message Line {
+  repeated Vector2D point = 1;
+}
+
+// A simple polygon, points are clockwise
+message Polygon {
+  repeated Vector2D point = 1;
+}
+
+message GeneralPolygon {
+  // outer points are clockwise
+  Polygon outer = 1;
+  // inner points are counter clockwise
+  repeated Polygon inners = 2;
+}

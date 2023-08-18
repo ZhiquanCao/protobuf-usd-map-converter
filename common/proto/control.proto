@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package oasis.proto.control;
+
+import "common/proto/common/header.proto";
+
+message ControlResult {
+  oasis.proto.common.Header header = 1;
+
+  double cmd_v = 2;
+
+  double cmd_w = 3;
+}

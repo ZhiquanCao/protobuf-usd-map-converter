@@ -1,0 +1,242 @@
+syntax = "proto3";
+
+package oasis.proto.maphub;
+
+import "common/proto/common/header.proto";
+import "common/proto/common/meta.proto";
+import "common/proto/common/geometry.proto";
+import "common/proto/common/util.proto";
+import "common/proto/common/semantic_type.proto";
+import "common/proto/common/image.proto";
+
+message MapGeometry {
+  oasis.proto.common.Meta meta = 1;
+  // unique id in map
+  uint64 id = 2;
+
+  oneof geometry_type {
+    // point set 
+    oasis.proto.common.PointSet3D point_set = 3;
+    // elements with opening figure: curb, obs edge
+    oasis.proto.common.Line line = 4;
+    // elements with closed figure
+    oasis.proto.common.Polygon polygon = 5;
+  }
+}
+
+message MapEdgeSegment {
+  oasis.proto.common.Meta meta = 1;
+  // unique id in map
+  uint64 id = 2;
+  // the edge between lawn and others
+  // the first is near robot seg
+  oasis.proto.common.SemanticLine edge_line = 3;
+}
+
+message MapEdgeCorner {
+  oasis.proto.common.Meta meta = 1;
+  // [0, 2pi], in lawn side angle
+  double corner_angle = 2;
+  // order with mow direction
+  MapEdgeSegment first_seg = 3;
+  // order with mow direction
+  MapEdgeSegment second_seg = 4;
+}
+
+// 割草样式
+enum Pattern {
+  UNKNOW = 0;
+}
+
+//单草坪数据结构
+message MapEdge {
+  oasis.proto.common.Meta meta = 1;
+  // 草坪id 从 1 开始计数，0表示基站
+  uint64 id = 2;
+  // outer points are clockwise
+  oasis.proto.common.SemanticPolygon outer = 3;
+  // inner points are counter clockwise
+  repeated oasis.proto.common.SemanticPolygon inners = 4;
+  // map object uuid
+  repeated uint64 obj_ids = 5;
+  // 割草样式
+  Pattern pattern = 6;
+  // 割草高度
+  double grass_high = 7; 
+}
+
+message MapObject {
+  // 整张地图唯一id
+  uint64 id = 1;
+  // 物体识别可信度
+  double confidence = 2;
+  // 朝向
+  double heading = 3;
+  // 物体位置
+  oasis.proto.common.Vector3D position = 4;
+  // 物体外边界封闭多边形
+  oasis.proto.common.Polygon polygon = 5;
+  // 地图对象类型，slam目前以及将来能够识别的所有语义类型
+  oasis.proto.common.SemanticType object_type = 6;
+  // obstacle length.
+  double length = 7;
+  // obstacle width.
+  double width = 8;
+  // obstacle height.
+  double height = 9;
+}
+
+message MergeScans {
+  repeated oasis.proto.common.SemanticPointCloud scan = 1;
+  enum Type{
+      LEFT = 0;
+      RIGHT = 1;
+  }
+  Type type = 2;
+}
+
+message LocalMap {
+  oasis.proto.common.Header header = 1;
+
+  repeated MapObject object = 2;
+
+  repeated MapGeometry geometry = 3;
+  // The first idx is the edge that the robot is processing
+  // using the param edge_side clockwise/counterclockwise
+  repeated MapEdgeSegment edge_seg = 4;
+  // The first idx is the edge that the robot is processing
+  repeated MapEdgeCorner edge_corner = 5;
+  // point cloud in odom_link
+  repeated MergeScans  odom_scans = 6;
+}
+
+message ChannelTrajectoryPoint{
+  // 通道轨迹点位姿
+  oasis.proto.common.Pose2d  pose = 1;
+  // 通道轨迹点可通行宽度
+  float width = 2;
+}
+
+message MapChannel {
+  uint32 channel_id = 1;
+  // 起始草坪id
+  uint32 start_id = 2;
+  // 目标草坪id  
+  uint32 end_id = 3;
+  // 固定轨迹
+  repeated ChannelTrajectoryPoint path = 4;
+  oasis.proto.common.Polygon outer = 5;
+}
+
+//静态地图
+message HDMap {
+  oasis.proto.common.Header header = 1;
+  
+  // 整张地图，所有已知确切语义的地图对象（树、花坛、灌木、路等） 
+  repeated MapObject object = 2;
+  // 整张地图，所有已知不可通行区域的几何描述（点集、线段、多边形）
+  repeated MapGeometry geometry = 3;
+  // 整张地图，外边界
+  oasis.proto.common.Polygon boundary = 4;
+  // 基站位置和朝向
+  oasis.proto.common.Pose3d station = 5;
+  
+  // MapEdge表示一块草坪，包括外边界和内边界
+  repeated MapEdge edge_info = 6;
+
+  // 草坪-草坪通行区域 草坪-基站通行区域 
+  repeated MapChannel channels = 7;
+}
+
+message CoverageMap {
+  oasis.proto.common.Header header = 1;
+
+  // mower mowed area
+  message MowedArea {
+    oasis.proto.common.Meta meta = 1;
+    // points are clockwise
+    oasis.proto.common.Polygon mowed_area_outer = 2;
+    // points are counterclockwise
+    repeated oasis.proto.common.Polygon mowed_area_inner = 3;
+  }
+  repeated MowedArea mowed_area = 2;
+  // direction of longest edge of polygon, in working map frame
+  double main_direction = 3;
+  // one of point in main_direction edge
+  oasis.proto.common.Vector2D main_direction_point = 4;
+}
+
+message Map {
+  oasis.proto.common.Header header = 1;
+
+  string map_name = 2;
+
+  HDMap hd_map = 3;
+
+  CoverageMap coverage_map = 4;
+  // will be available only in mow mode
+  repeated oasis.proto.common.Pose3d mowed_path = 5;
+  // latest fused local map
+  LocalMap local_map = 6;
+}
+
+message  MeshShape{
+  // every three values represent a triangle
+  repeated oasis.proto.common.Vector3D vertices = 1;
+  // the index of normals is correspond with triangle
+  repeated oasis.proto.common.Vector3D normals = 2;
+  // array, every three values represent a triangle
+  repeated uint32 triangle_indices = 3;
+}
+
+message MeshObject {
+  oasis.proto.common.Meta meta = 1;
+  // unique id in low poly map
+  uint64 id = 2;
+
+  MeshShape shape = 3;
+}
+
+message LowPolyMap {
+  oasis.proto.common.Header header = 1;
+
+  string map_name = 2;
+
+  repeated MeshObject objects = 3;
+}
+
+message BoundaryMappingModeState {
+  bool closed_flag = 1;
+}
+message ExploreMappingModeState {
+  double explored_area = 1;
+}
+message MowModeState {
+  double mowed_area = 1;
+}
+
+message MaphubState {
+  oasis.proto.common.Header header = 1;
+  bool back_ground_mapping_flag = 2;
+  oasis.proto.common.WorkingModeInfo.ModeType mode_type = 3;
+  oneof mode_state {
+    // maphub state in BOUNDARY_MAPPING mode
+    BoundaryMappingModeState boundary_mapping_state = 4;
+    // maphub state in EXPLORE_MAPPING mode
+    ExploreMappingModeState explore_mapping_state = 5;
+    // maphub state in MOW mode
+    MowModeState mow_state = 6;
+  }
+}
+message PerceptionMetaInfo {
+  float resolution = 1;
+  int32 start_x = 2;
+  int32 start_y = 3;
+  int32 start_z = 4;
+}
+
+message PerceptionImage {
+  PerceptionMetaInfo meta = 1;
+  oasis.proto.common.Image semantic_image = 2;
+  oasis.proto.common.Image height_image = 3;
+}

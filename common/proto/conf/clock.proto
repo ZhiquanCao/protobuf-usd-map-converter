@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package oasis.proto.config;
+
+message Clock {
+  uint64 clock = 1;
+}
